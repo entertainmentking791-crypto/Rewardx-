@@ -1,0 +1,6 @@
+{
+  "name": "GameX Hub - 2D Multi-Games Android Platform",
+  "description": "Premium 2D gaming dashboard featuring 20 playable arcade mini-games, virtual coins wallet, daily bonus rewards, and player progression.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

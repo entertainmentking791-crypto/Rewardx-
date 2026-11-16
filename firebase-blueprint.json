@@ -1,0 +1,185 @@
+{
+  "entities": {
+    "UserAccount": {
+      "title": "UserAccount",
+      "description": "Game profile, wallet balance, XP progression, scores, and daily bonus state for a signed-in RewardX player.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID of the player.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Player display name.",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "avatarId": {
+          "type": "string",
+          "description": "Selected avatar identifier.",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "level": {
+          "type": "integer",
+          "description": "Player progression level."
+        },
+        "xp": {
+          "type": "integer",
+          "description": "Total experience points earned."
+        },
+        "coins": {
+          "type": "integer",
+          "description": "Current wallet coin balance."
+        },
+        "joinedDate": {
+          "type": "string",
+          "description": "ISO calendar date when the player joined.",
+          "maxLength": 32
+        },
+        "unlockedAvatars": {
+          "type": "array",
+          "description": "List of unlocked avatar IDs (max 16)."
+        },
+        "claimedBadges": {
+          "type": "array",
+          "description": "List of earned badge labels (max 16)."
+        },
+        "claimedRewardIds": {
+          "type": "array",
+          "description": "List of redeemed reward IDs (max 64)."
+        },
+        "highScores": {
+          "type": "object",
+          "description": "Map of 3D game IDs to highest scores."
+        },
+        "recentGames": {
+          "type": "array",
+          "description": "Recently played 3D game IDs (max 10)."
+        },
+        "dailyBonus": {
+          "type": "object",
+          "description": "Daily streak tracking metadata."
+        },
+        "adTasks": {
+          "type": "object",
+          "description": "Daily AdMob task counters."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when user account was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of latest update."
+        }
+      },
+      "required": [
+        "uid",
+        "name",
+        "avatarId",
+        "level",
+        "xp",
+        "coins",
+        "joinedDate",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "UserPrivateInfo": {
+      "title": "UserPrivateInfo",
+      "description": "Isolated private PII details (email and profile photo URL) strictly readable and writable by the account owner.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 200
+        },
+        "photoURL": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "email", "updatedAt"]
+    },
+    "TransactionRecord": {
+      "title": "TransactionRecord",
+      "description": "Wallet coin earn or voucher redemption transaction record belonging to a user.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 140
+        },
+        "amount": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["EARN_GAME", "DAILY_BONUS", "REDEEM_REWARD", "ACHIEVEMENT", "REWARDED_AD"]
+        },
+        "date": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "gameId": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "status": {
+          "type": "string",
+          "enum": ["COMPLETED", "PROCESSING", "PENDING"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "userId", "title", "amount", "type", "date", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserAccount" },
+      "description": "Primary player profile, wallet balance, and gameplay progression."
+    },
+    "/users/{userId}/private/{docId}": {
+      "schema": { "$ref": "#/entities/UserPrivateInfo" },
+      "description": "Split private PII document holding verified email and photo URL."
+    },
+    "/users/{userId}/transactions/{txId}": {
+      "schema": { "$ref": "#/entities/TransactionRecord" },
+      "description": "Chronological wallet ledger entries for coins earned and vouchers redeemed."
+    }
+  }
+}
